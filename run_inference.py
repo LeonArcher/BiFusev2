@@ -26,9 +26,13 @@ if __name__ == '__main__':
     parser.add_argument('--img', type=str, required=True, help='Input panorama')
     args = parser.parse_args()
 
+    if args.mode == 'supervised':
+        model = BiFusev2.BiFuse.SupervisedCombinedModel(**network_args)
+    elif args.mode == 'selfsupervised':
+        model = BiFusev2.BiFuse.SelfSupervisedCombinedModel(**network_args)
+    else:
+        raise ValueError(f'Model unknown.')
 
-    if args.mode == 'supervised': model = BiFusev2.BiFuse.SupervisedCombinedModel(**network_args)
-    elif args.mode == 'selfsupervised': model = BiFusev2.BiFuse.SelfSupervisedCombinedModel(**network_args)
     param = torch.load(args.ckpt)
     model.load_state_dict(param, strict=False)
     model = model.cuda()
